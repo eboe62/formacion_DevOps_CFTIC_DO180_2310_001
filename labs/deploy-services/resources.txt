@@ -1,0 +1,37 @@
+timeout 5 bash -c \
+"</dev/tcp/db-pod.deploy-services.svc.cluster.local/3306" && \
+echo "connection success to db-pod.deploy-services.svc.cluster.local:3306" || \
+echo "connection failed"
+
+timeout 5 bash -c \
+"</dev/tcp/db-pod.deploy-services/3306" && \
+echo "connection success to db-pod.deploy-services:3306" || \
+echo "connection failed"
+
+timeout 5 bash -c \
+"</dev/tcp/db-pod/3306" && \
+echo "connection success to db-pod:3306" || \
+echo "connection failed"
+
+oc run shell --env POD_IP=$POD_IP -it --rm \
+--image registry.ocp4.example.com:8443/ubi8/ubi --restart Never \
+--command -- timeout 5 bash -c \
+"</dev/tcp/db-pod.deploy-services.svc.cluster.local/3306" && \
+echo "connection success to db-pod.deploy-services.svc.cluster.local:3306" \
+|| echo "connection failed"
+
+oc create job mysql-init \
+--image registry.ocp4.example.com:8443/redhattraining/do180-dbinit \
+-- /bin/bash -c "mysql -uuser1 -pmypa55w0rd --protocol tcp \
+-h db-pod -P3306 items </tmp/db-init.sql"
+
+oc run query-db -it --rm \
+--image registry.ocp4.example.com:8443/redhattraining/do180-dbinit \
+--restart Never \
+--command -- /bin/bash -c "mysql -uuser1 -pmypa55w0rd --protocol tcp \
+-h db-pod -P3306 items -e 'select * from Item;'"
+
+oc run shell --env POD_IP=$POD_IP -it --rm \
+--image registry.ocp4.example.com:8443/ubi8/ubi --restart Never \
+--command -- timeout 5 bash -c "</dev/tcp/$POD_IP/3306" && \
+echo "connection success to $POD_IP:3306" || echo "connection failed"

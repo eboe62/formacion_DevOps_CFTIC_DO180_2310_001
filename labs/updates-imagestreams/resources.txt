@@ -1,0 +1,5 @@
+oc create istag versioned-hello:v1.0 --from-image registry.ocp4.example.com:8443/redhattraining/versioned-hello:v1.0
+
+oc image info registry.ocp4.example.com:8443/redhattraining/versioned-hello:v1.0
+
+oc get pod <POD_NAME> -o jsonpath='{.spec.containers[0].image}{"\n"}'

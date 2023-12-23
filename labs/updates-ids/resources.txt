@@ -1,0 +1,15 @@
+registry.ocp4.example.com:8443/ubi8/httpd-24:1-209
+registry.ocp4.example.com:8443/ubi8/httpd-24:1-215
+
+1-209: sha256:b1e3c572516d19108428beca8a9da373a8cc7228832b4655eaed4d0c66def876
+1-215: sha256:91ad55f6ee89d7f59a428c6afe36a74c670d82045cf71d2750dc992b1654fd83
+
+oc set image deployment/httpd2 httpd-24=registry.ocp4.example.com:8443/ubi8/httpd-24:1-215
+
+oc get pod <POD_NAME> -o jsonpath='{.spec.containers[0].image}{"\n"}'
+
+# latest <--> 1-209
+skopeo copy docker://registry.ocp4.example.com:8443/ubi8/httpd-24:1-209 docker://registry.ocp4.example.com:8443/ubi8/httpd-24:latest
+
+# latest <--> 1-215
+skopeo copy docker://registry.ocp4.example.com:8443/ubi8/httpd-24:1-215 docker://registry.ocp4.example.com:8443/ubi8/httpd-24:latest
