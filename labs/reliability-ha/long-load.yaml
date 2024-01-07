@@ -9,4 +9,7 @@ spec:
     securityContext:
       allowPrivilegeEscalation: false
     name: long-load
-  restartPolicy: Never
+    env:
+      - name: START_DELAY
+        value: "60000"
+  restartPolicy: Always
