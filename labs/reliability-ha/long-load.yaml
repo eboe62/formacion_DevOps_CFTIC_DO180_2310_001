@@ -9,4 +9,4 @@ spec:
     securityContext:
       allowPrivilegeEscalation: false
     name: long-load
-  restartPolicy: Always
+  restartPolicy: Never
